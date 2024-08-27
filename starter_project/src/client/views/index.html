@@ -1,39 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Test</title>
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <title>Test</title>
+  </head>
 
-    <body>
+  <body>
+    <header>
+      <div class="">Logo</div>
+      <div class="">navigation</div>
+    </header>
 
-        <header>
-            <div class="">
-                Logo
-            </div>
-            <div class="">
-                navigation
-            </div>
-        </header>
+    <main>
+      <section>
+        <form id="urlForm">
+          <input
+            id="name"
+            type="text"
+            name="url"
+            placeholder="Enter URL"
+            required
+          />
+          <button id="submitButton" type="submit">Submit</button>
+        </form>
+      </section>
 
-        <main>
-            <section>
-                <form id="urlForm">
-                    <input id="name" type="text" name="url" placeholder="Enter URL" required>
-                    <button id="submitButton" type="submit">Submit</button>
-                </form>
-                
-            </section>
+      <section>
+        <strong>Form Results:</strong>
+        <div id="results"></div>
+      </section>
+    </main>
 
-            <section>
-                <strong>Form Results:</strong>
-                <div id="results"></div>
-            </section>
-        </main>
+    <footer>
+      <p>This is a footer</p>
+    </footer>
+    <script>
+      document
+        .getElementById("urlForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const userInput = document.getElementById("name").value;
 
-        <footer>
-            <p>This is a footer</p>
-        </footer>
-
-    </body>
+          fetch("http://localhost:8000/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: userInput }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("results").innerHTML = `
+                        Polarity: ${data.polarity}<br>
+                        Subjectivity: ${data.subjectivity}<br>
+                        Text: ${data.text}
+                    `;
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+    </script>
+  </body>
 </html>

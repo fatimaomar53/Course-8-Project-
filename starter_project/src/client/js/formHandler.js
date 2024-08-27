@@ -1,30 +1,30 @@
-// Replace checkForName with a function that checks the URL
-import { checkForName } from './nameChecker'
+export const handleSubmit = async (event) => {
+  event.preventDefault();
 
-// If working on Udacity workspace, update this with the Server API URL e.g. `https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api`
-// const serverURL = 'https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api'
-const serverURL = 'https://localhost:8000/api'
+  const urlInput = document.getElementById("url").value.trim();
+  if (!urlInput) {
+    alert("URL cannot be empty. Please provide a valid URL.");
+    return;
+  }
 
-const form = document.getElementById('urlForm');
-form.addEventListener('submit', handleSubmit);
+  try {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: urlInput }),
+    };
 
-function handleSubmit(event) {
-    event.preventDefault();
+    const response = await fetch("http://localhost:8081/api", requestOptions);
+    const resultData = await response.json();
 
-    // Get the URL from the input field
-    const formText = document.getElementById('name').value;
+    const output = `
+            <p>Polarity: ${resultData.score_tag}</p>
+            <p>Subjectivity: ${resultData.subjectivity}</p>
+            <p>Text: ${resultData.sentence_list[0].text}</p>
+        `;
 
-    // This is an example code that checks the submitted name. You may remove it from your code
-    checkForName(formText);
-    
-    // Check if the URL is valid
- 
-        // If the URL is valid, send it to the server using the serverURL constant above
-      
-}
-
-// Function to send data to the server
-
-// Export the handleSubmit function
-export { handleSubmit };
-
+    document.getElementById("results").innerHTML = output;
+  } catch (err) {
+    console.error("There was an issue with the request:", err);
+  }
+};
